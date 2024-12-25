@@ -1,3 +1,14 @@
-fun main() {
+import domain.Board
+import ui.MineSweeperPrinter
+import ui.MineSweeperReader
 
+fun main() {
+    val height = MineSweeperReader.readHeight()
+    val width = MineSweeperReader.readWidth()
+    val countOfLandMines = MineSweeperReader.readCountOfLandMine()
+
+    val board = Board(height = height, width = width, countOfLandMines = countOfLandMines)
+
+    MineSweeperPrinter.printGameStartMessage()
+    MineSweeperPrinter.printBoard(board)
 }
