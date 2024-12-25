@@ -5,19 +5,21 @@ class Board(height: Int, width: Int, countOfLandMines: Int) {
 
     init {
         val totalCountOfCells = height * width
-        val cells = Cells.createWithShuffling(
-            countOfSafeCells = totalCountOfCells - countOfLandMines,
-            countOfLandMineCells = countOfLandMines,
-        )
+        val cells =
+            Cells.createWithShuffling(
+                countOfSafeCells = totalCountOfCells - countOfLandMines,
+                countOfLandMineCells = countOfLandMines,
+            )
 
         var fromIndex = 0
         var toIndex = width
 
-        matrix = (1..height).map {
-            val subCells = cells.subList(fromIndex, toIndex)
-            fromIndex += width
-            toIndex += width
-            subCells
-        }
+        matrix =
+            (1..height).map {
+                val subCells = cells.subList(fromIndex, toIndex)
+                fromIndex += width
+                toIndex += width
+                subCells
+            }
     }
 }

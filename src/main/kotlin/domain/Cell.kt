@@ -1,5 +1,7 @@
 package domain
 
-interface Cell {}
-class LandMineCell : Cell {}
-class SafeCell : Cell {}
+interface Cell
+
+class LandMineCell : Cell
+
+class SafeCell : Cell
