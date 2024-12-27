@@ -6,9 +6,10 @@ class Board(height: Int, width: Int, landMinesCount: Int) {
     init {
         val totalCountOfCells = height * width
         val cells =
-            Cells.createWithShuffling(
+            Cells.create(
                 safeCellsCount = totalCountOfCells - landMinesCount,
                 landMinesCount = landMinesCount,
+                shufflingStrategy = DefaultShufflingStrategy
             )
 
         matrix =
