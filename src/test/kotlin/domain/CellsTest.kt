@@ -8,7 +8,7 @@ class CellsTest : FreeSpec({
         val countOfSafeCells = 95
         val countOfLandMineCells = 5
 
-        val cells = Cells.createWithShuffling(countOfSafeCells = countOfSafeCells, countOfLandMineCells = countOfLandMineCells)
+        val cells = Cells.createWithShuffling(safeCellsCount = countOfSafeCells, landMinesCount = countOfLandMineCells)
 
         cells.elements shouldHaveSize countOfSafeCells + countOfLandMineCells
         cells.elements.filterIsInstance<SafeCell>() shouldHaveSize countOfSafeCells

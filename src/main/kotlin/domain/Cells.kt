@@ -10,11 +10,11 @@ class Cells(val elements: List<Cell>) {
 
     companion object {
         fun createWithShuffling(
-            countOfSafeCells: Int,
-            countOfLandMineCells: Int,
+            safeCellsCount: Int,
+            landMinesCount: Int,
         ): Cells {
-            val safeCells = (1..countOfSafeCells).map { SafeCell() }
-            val landMineCells = (1..countOfLandMineCells).map { LandMineCell() }
+            val safeCells = (1..safeCellsCount).map { SafeCell() }
+            val landMineCells = (1..landMinesCount).map { LandMineCell() }
 
             val cells = safeCells + landMineCells
             return Cells(cells.shuffled())

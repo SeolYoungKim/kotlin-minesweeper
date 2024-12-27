@@ -1,25 +1,21 @@
 package domain
 
-class Board(height: Int, width: Int, countOfLandMines: Int) {
+class Board(height: Int, width: Int, landMinesCount: Int) {
     val matrix: List<Cells>
 
     init {
         val totalCountOfCells = height * width
         val cells =
             Cells.createWithShuffling(
-                countOfSafeCells = totalCountOfCells - countOfLandMines,
-                countOfLandMineCells = countOfLandMines,
+                safeCellsCount = totalCountOfCells - landMinesCount,
+                landMinesCount = landMinesCount,
             )
 
-        var fromIndex = 0
-        var toIndex = width
-
         matrix =
-            (1..height).map {
-                val subCells = cells.subList(fromIndex, toIndex)
-                fromIndex += width
-                toIndex += width
-                subCells
+            (1..height).map { number ->
+                val fromIndex = (number - 1) * width
+                val toIndex = number * width
+                cells.subList(fromIndex, toIndex)
             }
     }
 }

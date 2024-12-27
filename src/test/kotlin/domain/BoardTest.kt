@@ -10,7 +10,7 @@ class BoardTest : FreeSpec({
         val width = 5
         val countOfLandMineCells = 5
 
-        val board = Board(height = height, width = width, countOfLandMines = countOfLandMineCells)
+        val board = Board(height = height, width = width, landMinesCount = countOfLandMineCells)
 
         board.matrix shouldHaveSize height
         board.matrix.forEach { cells -> cells.elements shouldHaveSize width }
