@@ -18,5 +18,32 @@ class Board(height: Int, width: Int, landMinesCount: Int) {
                 val toIndex = number * width
                 cells.subList(fromIndex, toIndex)
             }
+
+        countLandMineCellNearBySafeCell()
+    }
+
+    private fun countLandMineCellNearBySafeCell() {
+        matrix.forEachIndexed { index, cells ->
+            cells.fillLandMineCellCountNearBySafeCell(
+                previousCells = getPreviousCellsOf(index),
+                nextCells = getNextCellsOf(index),
+            )
+        }
+    }
+
+    private fun getPreviousCellsOf(index: Int): Cells? {
+        return if (index == 0) {
+            null
+        } else {
+            matrix[index - 1]
+        }
+    }
+
+    private fun getNextCellsOf(index: Int): Cells? {
+        return if (index == matrix.lastIndex) {
+            null
+        } else {
+            matrix[index + 1]
+        }
     }
 }

@@ -81,4 +81,66 @@ class CellsTest : FreeSpec({
             }
         }
     }
+
+    "previousCells와 nextCells를 받아 targetCells의 근처 지뢰 수를 계산해서 채워준다" - {
+
+        /**
+         * 테스트 데이터 예시
+         *    C * C
+         *    * C *  <-- targetCells
+         *    C * C
+         */
+        "previousCells, nextCells가 존재하는 경우" {
+            val previousCells = Cells(listOf(SafeCell(), LandMineCell(), SafeCell()))
+            val targetCells = Cells(listOf(LandMineCell(), SafeCell(), LandMineCell()))
+            val nextCells = Cells(listOf(SafeCell(), LandMineCell(), SafeCell()))
+
+            targetCells.fillLandMineCellCountNearBySafeCell(
+                previousCells = previousCells,
+                nextCells = nextCells
+            )
+
+            val safeCell = targetCells[1] as SafeCell
+            safeCell.landMineCountNearby shouldBe 4
+        }
+
+        /**
+         * 테스트 데이터 예시
+         *    C * C  <-- targetCells
+         *    * C *
+         */
+        "previousCells가 존재하지 않고 nextCells가 존재하는 경우" {
+            val targetCells = Cells(listOf(SafeCell(), LandMineCell(), SafeCell()))
+            val nextCells = Cells(listOf(LandMineCell(), SafeCell(), LandMineCell()))
+
+            targetCells.fillLandMineCellCountNearBySafeCell(
+                previousCells = null,
+                nextCells = nextCells
+            )
+
+            val firstSafeCell = targetCells[0] as SafeCell
+            val secondSafeCell = targetCells[2] as SafeCell
+
+            firstSafeCell.landMineCountNearby shouldBe 2
+            secondSafeCell.landMineCountNearby shouldBe 2
+        }
+
+        /**
+         * 테스트 데이터 예시
+         *    C * C
+         *    * C *  <-- targetCells
+         */
+        "previousCells가 존재하고 nextCells가 존재하지 않는 경우" {
+            val previousCells = Cells(listOf(SafeCell(), LandMineCell(), SafeCell()))
+            val targetCells = Cells(listOf(LandMineCell(), SafeCell(), LandMineCell()))
+
+            targetCells.fillLandMineCellCountNearBySafeCell(
+                previousCells = previousCells,
+                nextCells = null
+            )
+
+            val safeCell = targetCells[1] as SafeCell
+            safeCell.landMineCountNearby shouldBe 3
+        }
+    }
 })
