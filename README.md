@@ -80,5 +80,5 @@ C C C C C C C C C C
 
 ### 기능 목록 
 - 출력 
-  - [] SafeCell은 C가 아닌, 근처의 지뢰 개수를 표현 
+  - [x] SafeCell은 C가 아닌, 근처의 지뢰 개수를 표현 
 - [x] 지뢰가 아닌 Cell(SafeCell)은 주변 8개 사각형에 포함된 지뢰의 개수를 가진다

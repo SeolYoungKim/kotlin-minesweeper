@@ -38,7 +38,7 @@ object MineSweeperPrinter {
     private fun createCellMessage(cell: Cell): String {
         return when (cell) {
             is LandMineCell -> "*"
-            is SafeCell -> "C"
+            is SafeCell -> cell.landMineCountNearby.toString()
             else -> throw IllegalStateException()
         }
     }
