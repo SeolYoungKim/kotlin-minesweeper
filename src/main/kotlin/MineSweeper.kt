@@ -7,7 +7,7 @@ fun main() {
     val width = MineSweeperReader.readWidth()
     val countOfLandMines = MineSweeperReader.readCountOfLandMine()
 
-    val board = Board(height = height, width = width, landMinesCount = countOfLandMines)
+    val board = Board(height = height, width = width, minesCount = countOfLandMines)
 
     MineSweeperPrinter.printGameStartMessage()
     MineSweeperPrinter.printBoard(board)

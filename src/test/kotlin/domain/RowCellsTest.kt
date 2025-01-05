@@ -20,47 +20,47 @@ object FixedSeedShufflingStrategy : ShufflingStrategy {
     }
 }
 
-class CellsTest : FreeSpec({
+class RowCellsTest : FreeSpec({
     "SafeCell 개수와 LandMineCell 개수를 입력 받아 List<Cell>를 가진 Cells 생성한다" {
         val safeCellsCount = 95
-        val landMinesCount = 5
+        val minesCount = 5
 
-        val cells = Cells.create(
+        val rowCells = RowCells.create(
             safeCellsCount = safeCellsCount,
-            landMinesCount = landMinesCount,
+            minesCount = minesCount,
             shufflingStrategy = NoneShufflingStrategy
         )
 
-        cells.elements shouldHaveSize safeCellsCount + landMinesCount
-        cells.elements.filterIsInstance<SafeCell>() shouldHaveSize safeCellsCount
-        cells.elements.filterIsInstance<LandMineCell>() shouldHaveSize landMinesCount
+        rowCells.elements shouldHaveSize safeCellsCount + minesCount
+        rowCells.elements.filterIsInstance<SafeCell>() shouldHaveSize safeCellsCount
+        rowCells.elements.filterIsInstance<Mine>() shouldHaveSize minesCount
     }
 
     "셔플링 전략에 따라 cells를 섞을 수도 있다" {
         val safeCellsCount = 95
-        val landMinesCount = 5
+        val minesCount = 5
 
-        val noneShufflingCells = Cells.create(
+        val noneShufflingRowCells = RowCells.create(
             safeCellsCount = safeCellsCount,
-            landMinesCount = landMinesCount,
+            minesCount = minesCount,
             shufflingStrategy = NoneShufflingStrategy
         )
 
-        val shufflingCells = Cells.create(
+        val shufflingRowCells = RowCells.create(
             safeCellsCount = safeCellsCount,
-            landMinesCount = landMinesCount,
+            minesCount = minesCount,
             shufflingStrategy = FixedSeedShufflingStrategy
         )
 
-        val noneShufflingElements = noneShufflingCells.elements
-        val shufflingElements = shufflingCells.elements
+        val noneShufflingElements = noneShufflingRowCells.elements
+        val shufflingElements = shufflingRowCells.elements
 
         noneShufflingElements.size shouldBe shufflingElements.size
         noneShufflingElements.map { it.javaClass } shouldNotBeEqual shufflingElements.map { it.javaClass }
     }
 
-    "SafeCell 개수가 0이하이거나 LandMineCell 개수가 0 이하인 경우 예외를 발생시킨다" - {
-        data class Count(val safeCellsCount: Int, val landMinesCount: Int)
+    "SafeCell 개수가 0이하이거나 mineCell 개수가 0 이하인 경우 예외를 발생시킨다" - {
+        data class Count(val safeCellsCount: Int, val minesCount: Int)
         withData(
             Count(1, 0),
             Count(0, 1),
@@ -68,11 +68,11 @@ class CellsTest : FreeSpec({
             Count(-1, 1),
             Count(1, -1),
             Count(-1, -1),
-        ) { (safeCellsCount, landMinesCount) ->
+        ) { (safeCellsCount, minesCount) ->
             shouldThrow<IllegalArgumentException> {
-                Cells.create(
+                RowCells.create(
                     safeCellsCount = safeCellsCount,
-                    landMinesCount = landMinesCount,
+                    minesCount = minesCount,
                     shufflingStrategy = NoneShufflingStrategy
                 )
             }
@@ -88,17 +88,17 @@ class CellsTest : FreeSpec({
          *    C * C
          */
         "previousCells, nextCells가 존재하는 경우" {
-            val previousCells = Cells(listOf(SafeCell(), LandMineCell(), SafeCell()))
-            val targetCells = Cells(listOf(LandMineCell(), SafeCell(), LandMineCell()))
-            val nextCells = Cells(listOf(SafeCell(), LandMineCell(), SafeCell()))
+            val previousRowCells = RowCells(listOf(SafeCell(), Mine(), SafeCell()))
+            val targetRowCells = RowCells(listOf(Mine(), SafeCell(), Mine()))
+            val nextRowCells = RowCells(listOf(SafeCell(), Mine(), SafeCell()))
 
-            targetCells.fillLandMineCellCountNearBySafeCell(
-                previousCells = previousCells,
-                nextCells = nextCells
+            targetRowCells.fillMineCountNearBySafeCell(
+                previousRowCells = previousRowCells,
+                nextRowCells = nextRowCells
             )
 
-            val safeCell = targetCells[1] as SafeCell
-            safeCell.landMineCountNearby shouldBe 4
+            val safeCell = targetRowCells[1] as SafeCell
+            safeCell.mineCountNearby shouldBe 4
         }
 
         /**
@@ -107,19 +107,19 @@ class CellsTest : FreeSpec({
          *    * C *
          */
         "previousCells가 존재하지 않고 nextCells가 존재하는 경우" {
-            val targetCells = Cells(listOf(SafeCell(), LandMineCell(), SafeCell()))
-            val nextCells = Cells(listOf(LandMineCell(), SafeCell(), LandMineCell()))
+            val targetRowCells = RowCells(listOf(SafeCell(), Mine(), SafeCell()))
+            val nextRowCells = RowCells(listOf(Mine(), SafeCell(), Mine()))
 
-            targetCells.fillLandMineCellCountNearBySafeCell(
-                previousCells = null,
-                nextCells = nextCells
+            targetRowCells.fillMineCountNearBySafeCell(
+                previousRowCells = null,
+                nextRowCells = nextRowCells
             )
 
-            val firstSafeCell = targetCells[0] as SafeCell
-            val secondSafeCell = targetCells[2] as SafeCell
+            val firstSafeCell = targetRowCells[0] as SafeCell
+            val secondSafeCell = targetRowCells[2] as SafeCell
 
-            firstSafeCell.landMineCountNearby shouldBe 2
-            secondSafeCell.landMineCountNearby shouldBe 2
+            firstSafeCell.mineCountNearby shouldBe 2
+            secondSafeCell.mineCountNearby shouldBe 2
         }
 
         /**
@@ -128,16 +128,16 @@ class CellsTest : FreeSpec({
          *    * C *  <-- targetCells
          */
         "previousCells가 존재하고 nextCells가 존재하지 않는 경우" {
-            val previousCells = Cells(listOf(SafeCell(), LandMineCell(), SafeCell()))
-            val targetCells = Cells(listOf(LandMineCell(), SafeCell(), LandMineCell()))
+            val previousRowCells = RowCells(listOf(SafeCell(), Mine(), SafeCell()))
+            val targetRowCells = RowCells(listOf(Mine(), SafeCell(), Mine()))
 
-            targetCells.fillLandMineCellCountNearBySafeCell(
-                previousCells = previousCells,
-                nextCells = null
+            targetRowCells.fillMineCountNearBySafeCell(
+                previousRowCells = previousRowCells,
+                nextRowCells = null
             )
 
-            val safeCell = targetCells[1] as SafeCell
-            safeCell.landMineCountNearby shouldBe 3
+            val safeCell = targetRowCells[1] as SafeCell
+            safeCell.mineCountNearby shouldBe 3
         }
     }
 })

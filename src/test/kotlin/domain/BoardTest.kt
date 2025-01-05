@@ -10,15 +10,15 @@ class BoardTest : FreeSpec({
         val width = 5
         val countOfLandMineCells = 5
 
-        val board = Board(height = height, width = width, landMinesCount = countOfLandMineCells)
+        val board = Board(height = height, width = width, minesCount = countOfLandMineCells)
 
         board.matrix shouldHaveSize height
         board.matrix.forEach { cells -> cells.elements shouldHaveSize width }
 
-        val landMineCells =
+        val mines =
             board.matrix.flatMap { cells ->
-                cells.elements.filterIsInstance<LandMineCell>()
+                cells.elements.filterIsInstance<Mine>()
             }
-        landMineCells.size shouldBe countOfLandMineCells
+        mines.size shouldBe countOfLandMineCells
     }
 })

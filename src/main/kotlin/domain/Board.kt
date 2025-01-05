@@ -1,14 +1,14 @@
 package domain
 
-class Board(height: Int, width: Int, landMinesCount: Int) {
-    val matrix: List<Cells>
+class Board(height: Int, width: Int, minesCount: Int) {
+    val matrix: List<RowCells>
 
     init {
         val totalCountOfCells = height * width
-        val cells =
-            Cells.create(
-                safeCellsCount = totalCountOfCells - landMinesCount,
-                landMinesCount = landMinesCount,
+        val rowCells =
+            RowCells.create(
+                safeCellsCount = totalCountOfCells - minesCount,
+                minesCount = minesCount,
                 shufflingStrategy = DefaultShufflingStrategy
             )
 
@@ -16,22 +16,22 @@ class Board(height: Int, width: Int, landMinesCount: Int) {
             (1..height).map { number ->
                 val fromIndex = (number - 1) * width
                 val toIndex = number * width
-                cells.subList(fromIndex, toIndex)
+                rowCells.subList(fromIndex, toIndex)
             }
 
-        countLandMineCellNearBySafeCell()
+        countMineNearBySafeCell()
     }
 
-    private fun countLandMineCellNearBySafeCell() {
-        matrix.forEachIndexed { index, cells ->
-            cells.fillLandMineCellCountNearBySafeCell(
-                previousCells = getPreviousCellsOf(index),
-                nextCells = getNextCellsOf(index),
+    private fun countMineNearBySafeCell() {
+        matrix.forEachIndexed { index, rowCells ->
+            rowCells.fillMineCountNearBySafeCell(
+                previousRowCells = getPreviousCellsOf(index),
+                nextRowCells = getNextCellsOf(index),
             )
         }
     }
 
-    private fun getPreviousCellsOf(index: Int): Cells? {
+    private fun getPreviousCellsOf(index: Int): RowCells? {
         return if (index == 0) {
             null
         } else {
@@ -39,7 +39,7 @@ class Board(height: Int, width: Int, landMinesCount: Int) {
         }
     }
 
-    private fun getNextCellsOf(index: Int): Cells? {
+    private fun getNextCellsOf(index: Int): RowCells? {
         return if (index == matrix.lastIndex) {
             null
         } else {

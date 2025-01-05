@@ -1,6 +1,6 @@
 package domain
 
-class Cells(val elements: List<Cell>) {
+class RowCells(val elements: List<Cell>) {
     /**
      * [fromIndex] : 포함
      * [toIndex] : 제외
@@ -8,36 +8,36 @@ class Cells(val elements: List<Cell>) {
     fun subList(
         fromIndex: Int,
         toIndex: Int,
-    ): Cells {
-        return Cells(elements.subList(fromIndex, toIndex))
+    ): RowCells {
+        return RowCells(elements.subList(fromIndex, toIndex))
     }
 
     operator fun get(index: Int): Cell {
         return elements[index]
     }
 
-    fun fillLandMineCellCountNearBySafeCell(previousCells: Cells?, nextCells: Cells?) {
+    fun fillMineCountNearBySafeCell(previousRowCells: RowCells?, nextRowCells: RowCells?) {
         elements.forEachIndexed { index, cell ->
             if (cell is SafeCell) {
-                val previousCount = countLandMineCells(previousCells, index)
+                val previousCount = countLandMineCells(previousRowCells, index)
                 val midCount = countLandMineCells(this, index)
-                val nextCount = countLandMineCells(nextCells, index)
+                val nextCount = countLandMineCells(nextRowCells, index)
 
-                cell.landMineCountNearby = previousCount + midCount + nextCount
+                cell.mineCountNearby = previousCount + midCount + nextCount
             }
         }
     }
 
-    private fun countLandMineCells(otherCells: Cells?, currentCellIndex: Int): Int {
-        return if (otherCells == null) {
+    private fun countLandMineCells(otherRowCells: RowCells?, currentCellIndex: Int): Int {
+        return if (otherRowCells == null) {
             0
         } else {
             val fromIndex = getFromIndex(currentCellIndex)
             val toIndex = getToIndex(currentCellIndex)
 
-            otherCells.elements
+            otherRowCells.elements
                 .slice(fromIndex..toIndex)
-                .count { cell -> cell.isLandMine() }
+                .count { cell -> cell.isMine() }
         }
     }
 
@@ -60,16 +60,16 @@ class Cells(val elements: List<Cell>) {
     companion object {
         fun create(
             safeCellsCount: Int,
-            landMinesCount: Int,
+            minesCount: Int,
             shufflingStrategy: ShufflingStrategy
-        ): Cells {
-            require(safeCellsCount > 0 && landMinesCount > 0) { "safeCellsCount와 landMinesCount는 0보다 커야 합니다." }
+        ): RowCells {
+            require(safeCellsCount > 0 && minesCount > 0) { "safeCellsCount와 minesCount는 0보다 커야 합니다." }
 
             val safeCells = (1..safeCellsCount).map { SafeCell() }
-            val landMineCells = (1..landMinesCount).map { LandMineCell() }
+            val mines = (1..minesCount).map { Mine() }
 
-            val cells = safeCells + landMineCells
-            return Cells(shufflingStrategy.shuffle(cells))
+            val cells = safeCells + mines
+            return RowCells(shufflingStrategy.shuffle(cells))
         }
     }
 }
