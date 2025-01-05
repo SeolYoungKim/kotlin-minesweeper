@@ -2,8 +2,8 @@ package ui
 
 import domain.Board
 import domain.Cell
-import domain.Cells
-import domain.LandMineCell
+import domain.RowCells
+import domain.Mine
 import domain.SafeCell
 
 object MineSweeperPrinter {
@@ -29,16 +29,16 @@ object MineSweeperPrinter {
         }
     }
 
-    private fun createCellsMessage(cells: Cells): String {
-        return cells.elements.joinToString(separator = " ") { cell ->
+    private fun createCellsMessage(rowCells: RowCells): String {
+        return rowCells.elements.joinToString(separator = " ") { cell ->
             createCellMessage(cell)
         }
     }
 
     private fun createCellMessage(cell: Cell): String {
         return when (cell) {
-            is LandMineCell -> "*"
-            is SafeCell -> "C"
+            is Mine -> "*"
+            is SafeCell -> cell.mineCountNearby.toString()
             else -> throw IllegalStateException()
         }
     }

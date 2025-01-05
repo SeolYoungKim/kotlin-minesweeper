@@ -1,7 +1,19 @@
 package domain
 
-interface Cell
+interface Cell {
+    fun isMine(): Boolean
+}
 
-class LandMineCell : Cell
+class Mine : Cell {
+    override fun isMine(): Boolean {
+        return true
+    }
+}
 
-class SafeCell : Cell
+class SafeCell : Cell {
+    var mineCountNearby: Int = 0
+
+    override fun isMine(): Boolean {
+        return false
+    }
+}
