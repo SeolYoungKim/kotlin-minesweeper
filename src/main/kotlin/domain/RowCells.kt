@@ -19,25 +19,33 @@ class RowCells(val elements: List<Cell>) {
     fun fillMineCountNearBySafeCell(previousRowCells: RowCells?, nextRowCells: RowCells?) {
         elements.forEachIndexed { index, cell ->
             if (cell is SafeCell) {
-                val previousCount = countLandMineCells(previousRowCells, index)
-                val midCount = countLandMineCells(this, index)
-                val nextCount = countLandMineCells(nextRowCells, index)
+                val previousCount = countMines(previousRowCells, index)
+                val midCount = countMines(this, index)
+                val nextCount = countMines(nextRowCells, index)
 
                 cell.mineCountNearby = previousCount + midCount + nextCount
             }
         }
     }
 
-    private fun countLandMineCells(otherRowCells: RowCells?, currentCellIndex: Int): Int {
-        return if (otherRowCells == null) {
-            0
-        } else {
-            val fromIndex = getFromIndex(currentCellIndex)
-            val toIndex = getToIndex(currentCellIndex)
+    private fun countMines(otherRowCells: RowCells?, currentCellIndex: Int): Int {
+        return when (otherRowCells) {
+            null -> 0
+            this -> {
+                val previousIndex = getFromIndex(currentCellIndex)
+                val nextIndex = getToIndex(currentCellIndex)
 
-            otherRowCells.elements
-                .slice(fromIndex..toIndex)
-                .count { cell -> cell.isMine() }
+                listOf(elements[previousIndex], elements[nextIndex])
+                    .count { cell -> cell.isMine() }
+            }
+            else -> {
+                val fromIndex = getFromIndex(currentCellIndex)
+                val toIndex = getToIndex(currentCellIndex)
+
+                otherRowCells.elements
+                    .slice(fromIndex..toIndex)
+                    .count { cell -> cell.isMine() }
+            }
         }
     }
 
